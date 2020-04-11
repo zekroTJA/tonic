@@ -7,4 +7,5 @@ type Image struct {
 	Location string    `json:"location"`
 	Date     time.Time `json:"date"`
 	Size     int64     `json:"size"`
+	MimeType string    `json:"mime_type"`
 }

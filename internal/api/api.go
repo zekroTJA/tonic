@@ -2,6 +2,8 @@ package api
 
 import (
 	"crypto/rand"
+	"fmt"
+	"math"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +11,10 @@ import (
 	"github.com/zekroTJA/tonic/internal/imgstore"
 )
 
-var defAuthExpire = 30 * 24 * time.Hour
+var (
+	defAuthExpire  = 30 * 24 * time.Hour
+	defCacheMaxAge = 30 * 24 * time.Hour
+)
 
 type RestAPI struct {
 	cfg *config.Config
@@ -17,6 +22,8 @@ type RestAPI struct {
 
 	authSecret []byte
 	authExpire time.Duration
+
+	cacheHeader string
 
 	router *gin.Engine
 }
@@ -48,6 +55,16 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 		r.authExpire = defAuthExpire
 	}
 
+	maxAge := defCacheMaxAge
+	if cfg.CacheMaxAge != "" {
+		maxAge, err = time.ParseDuration(cfg.CacheMaxAge)
+		if err != nil {
+			return
+		}
+	}
+	r.cacheHeader = fmt.Sprintf("max-age=%.0f, public",
+		math.Floor(maxAge.Seconds()))
+
 	r.router = gin.Default()
 
 	{
@@ -63,7 +80,8 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 			images := api.Group("/images", r.handleAuthCheck)
 			images.
 				GET("", r.handlerGetImages).
-				GET("/:image", r.handlerGetImage)
+				GET("/:image", r.handlerGetImage).
+				GET("/:image/info", r.handlerGetImageInfo)
 		}
 	}
 

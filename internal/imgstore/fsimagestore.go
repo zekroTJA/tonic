@@ -3,9 +3,11 @@ package imgstore
 import (
 	"io"
 	"io/ioutil"
+	"mime"
 	"os"
 	"path"
 	"regexp"
+	"strings"
 )
 
 var imgRx = regexp.MustCompile(`^.+\.(jpe?g|png|gif|bmp|tiff|ico|bpg)$`)
@@ -33,16 +35,17 @@ func (f *FSImageStore) List() ([]*Image, error) {
 			continue
 		}
 
-		name := file.Name()
-		if !imgRx.MatchString(name) {
+		fileName := file.Name()
+		if !imgRx.MatchString(fileName) {
 			continue
 		}
 
 		img := &Image{
-			Location: path.Join(f.location, name),
+			Location: path.Join(f.location, fileName),
 			Date:     file.ModTime(),
-			Name:     name,
+			Name:     fileName,
 			Size:     file.Size(),
+			MimeType: getMimeType(fileName),
 		}
 
 		images[i] = img
@@ -60,11 +63,14 @@ func (f *FSImageStore) Get(name string) (*Image, error) {
 		return nil, err
 	}
 
+	fileName := file.Name()
+
 	img := &Image{
 		Location: filePath,
 		Date:     file.ModTime(),
-		Name:     file.Name(),
+		Name:     fileName,
 		Size:     file.Size(),
+		MimeType: getMimeType(fileName),
 	}
 
 	return img, nil
@@ -86,4 +92,9 @@ func (f *FSImageStore) Rename(name, newName string) error {
 
 func (f *FSImageStore) Delete(name string) error {
 	return os.Remove(path.Join(f.location, name))
+}
+
+func getMimeType(name string) string {
+	iExt := strings.LastIndex(name, ".")
+	return mime.TypeByExtension(name[iExt:])
 }

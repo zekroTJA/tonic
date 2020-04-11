@@ -35,5 +35,30 @@ func (r *RestAPI) handlerGetImage(ctx *gin.Context) {
 		return
 	}
 
+	reader, err := r.img.GetReader(imageName)
+	if err != nil {
+		failInternal(ctx, err)
+		return
+	}
+
+	ctx.DataFromReader(http.StatusOK, image.Size, image.MimeType, reader, map[string]string{
+		"Cache-Control": r.cacheHeader,
+	})
+}
+
+// GET /api/images/:image/info
+func (r *RestAPI) handlerGetImageInfo(ctx *gin.Context) {
+	imageName := ctx.Param("image")
+
+	image, err := r.img.Get(imageName)
+	if os.IsNotExist(err) {
+		failNotFound(ctx)
+		return
+	}
+	if err != nil {
+		failInternal(ctx, err)
+		return
+	}
+
 	ctx.JSON(http.StatusOK, image)
 }
