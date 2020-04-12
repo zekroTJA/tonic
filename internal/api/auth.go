@@ -15,6 +15,7 @@ const (
 
 var jwtGenerationMethod = jwt.SigningMethodHS256
 
+// POST /api/auth/login
 func (r *RestAPI) handleAuthLogin(ctx *gin.Context) {
 	var login loginModel
 	if err := ctx.ShouldBindJSON(&login); err != nil || login.Password == "" {
@@ -42,25 +43,18 @@ func (r *RestAPI) handleAuthLogin(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
+// POST /api/auth/validate
+func (r *RestAPI) handlerAuthValidate(ctx *gin.Context) {
+	if !r.check(ctx) {
+		failUnauthorized(ctx)
+		return
+	}
+
+	ctx.Status(http.StatusOK)
+}
+
 func (r *RestAPI) handleAuthCheck(ctx *gin.Context) {
-	token, err := ctx.Cookie(jwtCookieName)
-	if err != nil {
-		failUnauthorized(ctx)
-		ctx.Abort()
-		return
-	}
-
-	tokenObj, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		return r.authSecret, nil
-	})
-	if err != nil || !tokenObj.Valid {
-		failUnauthorized(ctx)
-		ctx.Abort()
-		return
-	}
-
-	claims, ok := tokenObj.Claims.(jwt.MapClaims)
-	if !ok || claims["sub"] != jwtSubject {
+	if !r.check(ctx) {
 		failUnauthorized(ctx)
 		ctx.Abort()
 		return
@@ -68,4 +62,25 @@ func (r *RestAPI) handleAuthCheck(ctx *gin.Context) {
 
 	ctx.Next()
 	return
+}
+
+func (r *RestAPI) check(ctx *gin.Context) bool {
+	token, err := ctx.Cookie(jwtCookieName)
+	if err != nil {
+		return false
+	}
+
+	tokenObj, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		return r.authSecret, nil
+	})
+	if err != nil || !tokenObj.Valid {
+		return false
+	}
+
+	claims, ok := tokenObj.Claims.(jwt.MapClaims)
+	if !ok || claims["sub"] != jwtSubject {
+		return false
+	}
+
+	return true
 }

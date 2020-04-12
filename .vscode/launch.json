@@ -15,7 +15,8 @@
                 "TONIC_ADDRESS": "localhost:8080",
                 "TONIC_PASSWORD": "test",
                 "TONIC_DEBUG": true,
-                "TONIC_JWTSECRET": "superSecretTestSecret"
+                "TONIC_JWTSECRET": "superSecretTestSecret",
+                "TONIC_WEBDIR": "${workspaceFolder}/web/build"
             },
             "args": []
         }

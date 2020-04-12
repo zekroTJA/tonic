@@ -24,6 +24,7 @@ type RestAPI struct {
 	authExpire time.Duration
 
 	cacheHeader string
+	webDir      string
 
 	router *gin.Engine
 }
@@ -55,6 +56,12 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 		r.authExpire = defAuthExpire
 	}
 
+	if cfg.WebDir != "" {
+		r.webDir = cfg.WebDir
+	} else {
+		r.webDir = "./web"
+	}
+
 	maxAge := defCacheMaxAge
 	if cfg.CacheMaxAge != "" {
 		maxAge, err = time.ParseDuration(cfg.CacheMaxAge)
@@ -67,6 +74,10 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 
 	r.router = gin.Default()
 
+	if r.cfg.Debug {
+		r.router.Use(r.handlerCORS)
+	}
+
 	r.router.GET("/images/:image", r.handleAuthCheck, r.handlerGetImage)
 
 	{
@@ -75,7 +86,8 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 		{
 			auth := api.Group("/auth")
 			auth.
-				POST("/login", r.handleAuthLogin)
+				POST("/login", r.handleAuthLogin).
+				POST("/validate", r.handlerAuthValidate)
 		}
 
 		{
@@ -87,6 +99,8 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 				DELETE("/:image", r.handlerDeleteImageInfo)
 		}
 	}
+
+	r.router.Use(r.handlerFiles)
 
 	return
 }

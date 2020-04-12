@@ -1,6 +1,10 @@
 package util
 
-import "strings"
+import (
+	"fmt"
+	"mime"
+	"strings"
+)
 
 func GetExtension(fileName string) string {
 	iExt := strings.LastIndex(fileName, ".")
@@ -9,4 +13,8 @@ func GetExtension(fileName string) string {
 	}
 
 	return fileName[iExt+1:]
+}
+
+func GetMimeType(name string) string {
+	return mime.TypeByExtension(fmt.Sprintf(".%s", GetExtension(name)))
 }

@@ -1,10 +1,8 @@
 package imgstore
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
-	"mime"
 	"os"
 	"path"
 	"regexp"
@@ -47,7 +45,7 @@ func (f *FSImageStore) List() ([]*Image, error) {
 			Date:     file.ModTime(),
 			Name:     fileName,
 			Size:     file.Size(),
-			MimeType: getMimeType(fileName),
+			MimeType: util.GetMimeType(fileName),
 		}
 
 		images[i] = img
@@ -72,7 +70,7 @@ func (f *FSImageStore) Get(name string) (*Image, error) {
 		Date:     file.ModTime(),
 		Name:     fileName,
 		Size:     file.Size(),
-		MimeType: getMimeType(fileName),
+		MimeType: util.GetMimeType(fileName),
 	}
 
 	return img, nil
@@ -94,8 +92,4 @@ func (f *FSImageStore) Rename(name, newName string) error {
 
 func (f *FSImageStore) Delete(name string) error {
 	return os.Remove(path.Join(f.location, name))
-}
-
-func getMimeType(name string) string {
-	return mime.TypeByExtension(fmt.Sprintf(".%s", util.GetExtension(name)))
 }

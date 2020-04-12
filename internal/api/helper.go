@@ -28,3 +28,8 @@ func failBadRequest(ctx *gin.Context) {
 func failUnauthorized(ctx *gin.Context) {
 	fail(ctx, http.StatusUnauthorized, "unauthorized")
 }
+
+func (r *RestAPI) handlerCORS(ctx *gin.Context) {
+	ctx.Header("Access-Control-Allow-Origin", "*")
+	ctx.Header("Access-Control-Allow-Method", "POST,GET,DELETE")
+}

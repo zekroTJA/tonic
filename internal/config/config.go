@@ -12,6 +12,7 @@ type Config struct {
 	JWTSecret   string
 	JWTExpire   string
 	CacheMaxAge string
+	WebDir      string
 }
 
 func New(prefix string) (c *Config, err error) {
