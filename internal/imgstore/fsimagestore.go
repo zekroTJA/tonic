@@ -1,16 +1,18 @@
 package imgstore
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"mime"
 	"os"
 	"path"
 	"regexp"
-	"strings"
+
+	"github.com/zekroTJA/tonic/internal/util"
 )
 
-var imgRx = regexp.MustCompile(`^.+\.(jpe?g|png|gif|bmp|tiff|ico|bpg)$`)
+var imgRx = regexp.MustCompile(`^.+\.(jpe?g|png|gif|bmp|tiff|ico|bpg|jfif)$`)
 
 type FSImageStore struct {
 	location string
@@ -95,6 +97,5 @@ func (f *FSImageStore) Delete(name string) error {
 }
 
 func getMimeType(name string) string {
-	iExt := strings.LastIndex(name, ".")
-	return mime.TypeByExtension(name[iExt:])
+	return mime.TypeByExtension(fmt.Sprintf(".%s", util.GetExtension(name)))
 }

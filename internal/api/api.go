@@ -67,6 +67,8 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 
 	r.router = gin.Default()
 
+	r.router.GET("/images/:image", r.handleAuthCheck, r.handlerGetImage)
+
 	{
 		api := r.router.Group("/api")
 
@@ -80,8 +82,9 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 			images := api.Group("/images", r.handleAuthCheck)
 			images.
 				GET("", r.handlerGetImages).
-				GET("/:image", r.handlerGetImage).
-				GET("/:image/info", r.handlerGetImageInfo)
+				GET("/:image", r.handlerGetImageInfo).
+				POST("/:image", r.handlerPostImageInfo).
+				DELETE("/:image", r.handlerDeleteImageInfo)
 		}
 	}
 
