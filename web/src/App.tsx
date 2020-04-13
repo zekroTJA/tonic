@@ -5,7 +5,8 @@ import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 
 import './App.scss';
 import LoginRoute from './routes/login/login-route';
-import RestAPI from './api/restapi';
+import RestAPI, { APIEvent } from './api/restapi';
+import MainRoute from './routes/main/main-route';
 
 export default class App extends Component {
   public state = {
@@ -13,10 +14,10 @@ export default class App extends Component {
   };
 
   public async componentDidMount() {
-    RestAPI.events.on('auth-error', () => {
+    RestAPI.events.on(APIEvent.AUTH_ERROR, () => {
       this.setState({ redirect: '/login' });
     });
-    RestAPI.validate().catch(() => {});
+    RestAPI.authValidate().catch(() => {});
   }
 
   public render() {
@@ -26,6 +27,11 @@ export default class App extends Component {
           exact
           path="/login"
           render={({ history }) => <LoginRoute history={history} />}
+        />
+        <Route
+          exact
+          path="/"
+          render={({ history }) => <MainRoute history={history} />}
         />
         {this.state.redirect && <Redirect to={this.state.redirect} />}
       </Router>

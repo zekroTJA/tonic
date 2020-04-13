@@ -2,13 +2,11 @@
 
 import React, { Component, ChangeEvent } from 'react';
 import RestAPI from '../../api/restapi';
-import { History } from 'history';
+import { History } from '../../types';
 
 import './login-route.scss';
 
-export default class LoginRoute extends Component<{
-  history: History<History.PoorMansUnknown>;
-}> {
+export default class LoginRoute extends Component<{ history: History }> {
   public state = {
     password: '',
     valid: null,
@@ -47,7 +45,7 @@ export default class LoginRoute extends Component<{
       if (this.state.password.length === 0) {
         return;
       }
-      await RestAPI.login(this.state.password);
+      await RestAPI.authLogin(this.state.password);
       this.props.history.push('/');
     } catch (err) {
       this.setState({ valid: false });
