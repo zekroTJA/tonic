@@ -1,9 +1,9 @@
 package api
 
 type listWrapper struct {
-	Count int         `json:"count"`
-	Page  int         `json:"page,omitempty"`
-	Data  interface{} `json:"data"`
+	Count  int         `json:"count"`
+	Offset int         `json:"offset"`
+	Data   interface{} `json:"data"`
 }
 
 type loginModel struct {

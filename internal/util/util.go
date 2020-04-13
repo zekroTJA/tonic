@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"mime"
+	"strconv"
 	"strings"
 )
 
@@ -17,4 +18,16 @@ func GetExtension(fileName string) string {
 
 func GetMimeType(name string) string {
 	return mime.TypeByExtension(fmt.Sprintf(".%s", GetExtension(name)))
+}
+
+func AtoiDef(str string, def int) int {
+	if str == "" {
+		return def
+	}
+
+	if i, err := strconv.Atoi(str); err == nil {
+		return i
+	}
+
+	return def
 }

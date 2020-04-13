@@ -22,11 +22,21 @@ func NewFSImageStore(location string) *FSImageStore {
 	}
 }
 
-func (f *FSImageStore) List() ([]*Image, error) {
+func (f *FSImageStore) List(offset, n int) ([]*Image, error) {
 	files, err := ioutil.ReadDir(f.location)
 	if err != nil {
 		return nil, err
 	}
+
+	l := len(files)
+	if n < 0 {
+		n = len(files)
+	}
+	if offset+n >= l {
+		n = l - offset
+	}
+
+	files = files[offset : offset+n]
 
 	images := make([]*Image, len(files))
 	i := 0

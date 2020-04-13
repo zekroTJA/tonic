@@ -11,15 +11,19 @@ import (
 
 // GET /api/images
 func (r *RestAPI) handlerGetImages(ctx *gin.Context) {
-	images, err := r.img.List()
+	offset := util.AtoiDef(ctx.Query("offset"), 0)
+	n := util.AtoiDef(ctx.Query("n"), 100)
+
+	images, err := r.img.List(offset, n)
 	if err != nil {
 		failInternal(ctx, err)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, listWrapper{
-		Count: len(images),
-		Data:  images,
+		Count:  len(images),
+		Offset: offset,
+		Data:   images,
 	})
 }
 
