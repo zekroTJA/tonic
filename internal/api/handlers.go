@@ -115,5 +115,5 @@ func (r *RestAPI) handlerDeleteImageInfo(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Status(http.StatusOK)
+	ok(ctx)
 }

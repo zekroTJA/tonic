@@ -1,0 +1,19 @@
+.login-wrapper {
+  margin: 20vh auto 0 auto;
+  text-align: center;
+  width: 90%;
+  max-width: 250px;
+
+  > input {
+    width: 100%;
+    text-align: center;
+  }
+
+  > .login-button {
+    margin-top: 20px;
+
+    > button {
+      // width: 100%;
+    }
+  }
+}

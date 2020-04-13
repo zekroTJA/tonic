@@ -1,7 +1,6 @@
 package api
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -40,7 +39,7 @@ func (r *RestAPI) handleAuthLogin(ctx *gin.Context) {
 
 	ctx.SetCookie(jwtCookieName, token, int(r.authExpire.Seconds()), "", "", false, true)
 
-	ctx.Status(http.StatusOK)
+	ok(ctx)
 }
 
 // POST /api/auth/validate
@@ -50,7 +49,7 @@ func (r *RestAPI) handlerAuthValidate(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Status(http.StatusOK)
+	ok(ctx)
 }
 
 func (r *RestAPI) handleAuthCheck(ctx *gin.Context) {
