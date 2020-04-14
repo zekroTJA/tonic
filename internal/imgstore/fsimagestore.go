@@ -86,7 +86,7 @@ func (f *FSImageStore) Get(name string) (*Image, error) {
 	return img, nil
 }
 
-func (f *FSImageStore) GetReader(name string) (io.Reader, error) {
+func (f *FSImageStore) GetReader(name string) (io.ReadCloser, error) {
 	return os.Open(path.Join(f.location, name))
 }
 

@@ -52,6 +52,26 @@ func (r *RestAPI) handlerGetImage(ctx *gin.Context) {
 	})
 }
 
+// GET /images/:image/thumbnail
+func (r *RestAPI) handlerGetImageThumbnail(ctx *gin.Context) {
+	imageName := ctx.Param("image")
+	width := util.AtoiDef(ctx.Query("width"), 200)
+	height := util.AtoiDef(ctx.Query("height"), 200)
+
+	imgReader, size, err := r.tn.GetThumbnail(imageName, width, height)
+	if os.IsNotExist(err) {
+		failNotFound(ctx)
+		return
+	}
+	if err != nil {
+		failInternal(ctx, err)
+		return
+	}
+
+	defer imgReader.Close()
+	ctx.DataFromReader(http.StatusOK, int64(size), util.GetMimeType(".jpg"), imgReader, nil)
+}
+
 // GET /api/images/:image
 func (r *RestAPI) handlerGetImageInfo(ctx *gin.Context) {
 	imageName := ctx.Param("image")

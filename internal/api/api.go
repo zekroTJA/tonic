@@ -26,6 +26,7 @@ type RestAPI struct {
 	cacheHeader string
 	webDir      string
 
+	tn     *Thumbnailer
 	router *gin.Engine
 }
 
@@ -39,6 +40,7 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 	r = new(RestAPI)
 	r.cfg = cfg
 	r.img = img
+	r.tn = NewThumbnailer(cfg.ThumbnailCache, img)
 
 	if cfg.JWTSecret != "" {
 		r.authSecret = []byte(cfg.JWTSecret)
@@ -78,7 +80,9 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 		r.router.Use(r.handlerCORS)
 	}
 
-	r.router.GET("/images/:image", r.handleAuthCheck, r.handlerGetImage)
+	r.router.
+		GET("/images/:image", r.handleAuthCheck, r.handlerGetImage).
+		GET("/images/:image/thumbnail", r.handleAuthCheck, r.handlerGetImageThumbnail)
 
 	{
 		api := r.router.Group("/api")

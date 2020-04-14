@@ -16,7 +16,8 @@
                 "TONIC_PASSWORD": "test",
                 "TONIC_DEBUG": true,
                 "TONIC_JWTSECRET": "superSecretTestSecret",
-                "TONIC_WEBDIR": "${workspaceFolder}/web/build"
+                "TONIC_WEBDIR": "${workspaceFolder}/web/build",
+                "TONIC_THUMBNAILCACHE": "${workspaceFolder}/data/cache"
             },
             "args": []
         }

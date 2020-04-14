@@ -8,11 +8,12 @@ type Config struct {
 	Password      string
 
 	// Optional
-	Debug       bool
-	JWTSecret   string
-	JWTExpire   string
-	CacheMaxAge string
-	WebDir      string
+	Debug          bool
+	JWTSecret      string
+	JWTExpire      string
+	CacheMaxAge    string
+	WebDir         string
+	ThumbnailCache string
 }
 
 func New(prefix string) (c *Config, err error) {
