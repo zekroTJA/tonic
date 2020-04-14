@@ -1,4 +1,4 @@
-package api
+package thumbnails
 
 import (
 	"bytes"
@@ -24,9 +24,9 @@ type Thumbnailer struct {
 	cacheLoc string
 }
 
-type ImageDecoder func(r io.Reader) (image.Image, error)
+type imageDecoder func(r io.Reader) (image.Image, error)
 
-func NewThumbnailer(cacheLog string, imgageStroe imgstore.ImageStore) *Thumbnailer {
+func New(cacheLog string, imgageStroe imgstore.ImageStore) *Thumbnailer {
 	t := &Thumbnailer{
 		img: imgageStroe,
 	}
@@ -122,7 +122,7 @@ func (t *Thumbnailer) saveToCache(imgPath string, imgData []byte, width, height 
 	return err
 }
 
-func (t *Thumbnailer) getDecoder(path string) (ImageDecoder, error) {
+func (t *Thumbnailer) getDecoder(path string) (imageDecoder, error) {
 	ext := util.GetExtension(path)
 
 	switch ext {

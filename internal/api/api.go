@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/zekroTJA/tonic/internal/config"
 	"github.com/zekroTJA/tonic/internal/imgstore"
+	"github.com/zekroTJA/tonic/internal/thumbnails"
 )
 
 var (
@@ -26,7 +27,7 @@ type RestAPI struct {
 	cacheHeader string
 	webDir      string
 
-	tn     *Thumbnailer
+	tn     *thumbnails.Thumbnailer
 	router *gin.Engine
 }
 
@@ -40,7 +41,7 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 	r = new(RestAPI)
 	r.cfg = cfg
 	r.img = img
-	r.tn = NewThumbnailer(cfg.ThumbnailCache, img)
+	r.tn = thumbnails.New(cfg.ThumbnailCache, img)
 
 	if cfg.JWTSecret != "" {
 		r.authSecret = []byte(cfg.JWTSecret)
