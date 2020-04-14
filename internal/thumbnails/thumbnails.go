@@ -126,7 +126,7 @@ func (t *Thumbnailer) getDecoder(path string) (imageDecoder, error) {
 	ext := util.GetExtension(path)
 
 	switch ext {
-	case "jpg", "jpeg":
+	case "jpg", "jpeg", "jfif":
 		return jpeg.Decode, nil
 	case "png":
 		return png.Decode, nil

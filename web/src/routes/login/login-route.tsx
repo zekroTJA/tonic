@@ -3,6 +3,12 @@
 import React, { Component, ChangeEvent } from 'react';
 import RestAPI from '../../api/restapi';
 import { History } from '../../types';
+import {
+  TextField,
+  FormControl,
+  FormHelperText,
+  Button,
+} from '@material-ui/core';
 
 import './login-route.scss';
 
@@ -17,15 +23,24 @@ export default class LoginRoute extends Component<{ history: History }> {
       <div className="flex">
         <div className="login-wrapper">
           <h1>LOGIN</h1>
-          <input
-            type="password"
-            value={this.state.password}
-            onChange={this.passwordChange.bind(this)}
-            style={{ borderColor: this.state.valid === false ? 'red' : '' }}
-          />
-          <div className="login-button">
-            <button onClick={this.login.bind(this)}>LOGIN</button>
-          </div>
+          <FormControl
+            error={this.state.valid === false}
+            className="form-control"
+          >
+            <TextField
+              type="password"
+              label="Password"
+              color="primary"
+              value={this.state.password}
+              onChange={this.passwordChange.bind(this)}
+            />
+            {this.state.valid === false && (
+              <FormHelperText>Invalid password.</FormHelperText>
+            )}
+            <Button onClick={this.login.bind(this)} color="primary">
+              Login
+            </Button>
+          </FormControl>
         </div>
       </div>
     );

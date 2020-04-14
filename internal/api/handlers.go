@@ -52,7 +52,7 @@ func (r *RestAPI) handlerGetImage(ctx *gin.Context) {
 	})
 }
 
-// GET /images/:image/thumbnail
+// GET /images/:image/thumbnail.jpg
 func (r *RestAPI) handlerGetImageThumbnail(ctx *gin.Context) {
 	imageName := ctx.Param("image")
 	width := util.AtoiDef(ctx.Query("width"), 200)

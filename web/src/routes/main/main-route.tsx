@@ -2,10 +2,15 @@
 
 import React, { Component } from 'react';
 import { History } from '../../types';
-
-import './main-route.scss';
 import { ImageData } from '../../api/models';
 import RestAPI from '../../api/restapi';
+import { IconButton } from '@material-ui/core';
+import { Delete, Edit } from '@material-ui/icons';
+
+import './main-route.scss';
+
+const IMGPREFIX =
+  process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
 
 export default class MainRoute extends Component<{ history: History }> {
   public state = {
@@ -17,8 +22,8 @@ export default class MainRoute extends Component<{ history: History }> {
   }
 
   public render() {
-    const images = this.state.images.map((i) => <p key={i.name}>{i.name}</p>);
-    return <div>{images}</div>;
+    const images = this.state.images.map(this.imageCard);
+    return <div className="images-container">{images}</div>;
   }
 
   private async fetchImages() {
@@ -29,4 +34,32 @@ export default class MainRoute extends Component<{ history: History }> {
       console.error(err);
     }
   }
+
+  private imageCard(image: ImageData): JSX.Element {
+    return (
+      <div className="image-card">
+        <div
+          className="image"
+          style={{
+            backgroundImage: `url("${IMGPREFIX}/images/${image.name}/thumbnail.jpg?height=150&width=10000")`,
+          }}
+        />
+        <div className="body">
+          <p>{image.name}</p>
+          <div className="controls">
+            <IconButton onClick={() => this.delete(image)}>
+              <Delete fontSize="small" />
+            </IconButton>
+            <IconButton onClick={() => this.rename(image)}>
+              <Edit fontSize="small" />
+            </IconButton>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  private delete(image: ImageData) {}
+
+  private rename(image: ImageData) {}
 }

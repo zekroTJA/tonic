@@ -83,7 +83,7 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 
 	r.router.
 		GET("/images/:image", r.handleAuthCheck, r.handlerGetImage).
-		GET("/images/:image/thumbnail", r.handleAuthCheck, r.handlerGetImageThumbnail)
+		GET("/images/:image/thumbnail.jpg", r.handleAuthCheck, r.handlerGetImageThumbnail)
 
 	{
 		api := r.router.Group("/api")
