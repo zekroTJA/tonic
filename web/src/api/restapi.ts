@@ -32,6 +32,10 @@ export default class RestAPI {
     return this.get(`/api/images?offset=${offset}&n=${n}`);
   }
 
+  public static async deleteImage(imageName: string): Promise<any> {
+    return this.delete(`/api/images/${imageName}`);
+  }
+
   // --------------------------------------------------------------------------------
   // -- PRIVATE FUNCTIONS
 
@@ -54,6 +58,17 @@ export default class RestAPI {
    */
   private static async post<T>(path: string, data: any = null): Promise<T> {
     return this.req<T>(path, 'POST', data);
+  }
+
+  /**
+   * Perform asynchronous DELETE REST request to given
+   * path with passed payload data.
+   *
+   * @param path   relative API path
+   * @param [data] payload *(optional)*
+   */
+  private static async delete<T>(path: string, data: any = null): Promise<T> {
+    return this.req<T>(path, 'DELETE', data);
   }
 
   /**

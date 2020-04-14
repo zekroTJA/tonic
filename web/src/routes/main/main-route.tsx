@@ -4,8 +4,9 @@ import React, { Component } from 'react';
 import { History } from '../../types';
 import { ImageData } from '../../api/models';
 import RestAPI from '../../api/restapi';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Button } from '@material-ui/core';
 import { Delete, Edit } from '@material-ui/icons';
+import Modal from '../../components/modal/modal';
 
 import './main-route.scss';
 
@@ -15,6 +16,8 @@ const IMGPREFIX =
 export default class MainRoute extends Component<{ history: History }> {
   public state = {
     images: [] as ImageData[],
+    modalDeleteOpen: false,
+    target: (null as any) as ImageData,
   };
 
   public async componentDidMount() {
@@ -22,8 +25,34 @@ export default class MainRoute extends Component<{ history: History }> {
   }
 
   public render() {
-    const images = this.state.images.map(this.imageCard);
-    return <div className="images-container">{images}</div>;
+    const images = this.state.images.map(this.imageCard.bind(this));
+    return (
+      <div className="flex">
+        <div className="images-container">{images}</div>
+        <Modal
+          open={this.state.modalDeleteOpen}
+          onClose={() => this.setState({ modalDeleteOpen: false })}
+        >
+          <h3 className="modal-heading">
+            Do you really want to delete this image?
+          </h3>
+
+          <Button
+            style={{ marginRight: '10px' }}
+            onClick={this.deleteImage.bind(this)}
+          >
+            Yes
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => this.setState({ modalDeleteOpen: false })}
+          >
+            No
+          </Button>
+        </Modal>
+      </div>
+    );
   }
 
   private async fetchImages() {
@@ -37,7 +66,7 @@ export default class MainRoute extends Component<{ history: History }> {
 
   private imageCard(image: ImageData): JSX.Element {
     return (
-      <div className="image-card">
+      <div className="image-card" key={image.name}>
         <div
           className="image"
           style={{
@@ -59,7 +88,20 @@ export default class MainRoute extends Component<{ history: History }> {
     );
   }
 
-  private delete(image: ImageData) {}
+  private delete(image: ImageData) {
+    this.setState({
+      modalDeleteOpen: true,
+      target: image,
+    });
+  }
 
   private rename(image: ImageData) {}
+
+  private async deleteImage() {
+    if (this.state.target) {
+      await RestAPI.deleteImage(this.state.target.name);
+      this.setState({ modalDeleteOpen: false });
+      this.fetchImages();
+    }
+  }
 }

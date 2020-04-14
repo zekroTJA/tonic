@@ -37,7 +37,11 @@ export default class LoginRoute extends Component<{ history: History }> {
             {this.state.valid === false && (
               <FormHelperText>Invalid password.</FormHelperText>
             )}
-            <Button onClick={this.login.bind(this)} color="primary">
+            <Button
+              onClick={this.login.bind(this)}
+              variant="contained"
+              color="primary"
+            >
               Login
             </Button>
           </FormControl>
