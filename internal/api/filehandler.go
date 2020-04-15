@@ -11,7 +11,7 @@ import (
 var fileRx = regexp.MustCompile(`^.*\.(ico|css|js|svg|gif|jpe?g|png)$`)
 
 func (r *RestAPI) handlerFiles(ctx *gin.Context) {
-	reqPath := ctx.FullPath()
+	reqPath := ctx.Request.URL.Path
 
 	if fileRx.MatchString(reqPath) {
 		ctx.Header("Content-Type", util.GetMimeType(reqPath))
