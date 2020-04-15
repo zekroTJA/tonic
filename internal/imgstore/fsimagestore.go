@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"sort"
 
 	"github.com/zekroTJA/tonic/internal/util"
 )
@@ -35,6 +36,10 @@ func (f *FSImageStore) List(offset, n int) ([]*Image, error) {
 	if offset+n >= l {
 		n = l - offset
 	}
+
+	sort.SliceStable(files, func(i, j int) bool {
+		return files[i].ModTime().After(files[j].ModTime())
+	})
 
 	files = files[offset : offset+n]
 
