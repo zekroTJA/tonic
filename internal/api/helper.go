@@ -38,7 +38,7 @@ func ok(ctx *gin.Context) {
 
 func (r *RestAPI) handlerCORS(ctx *gin.Context) {
 	ctx.Header("Access-Control-Allow-Origin", "http://localhost:3000")
-	ctx.Header("Access-Control-Allow-Method", "POST,GET,DELETE")
+	ctx.Header("Access-Control-Allow-Methods", "POST,GET,DELETE")
 	ctx.Header("Access-Control-Allow-Headers", "Content-Type,Cookie")
 	ctx.Header("Access-Control-Allow-Credentials", "true")
 }

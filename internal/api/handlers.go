@@ -11,8 +11,22 @@ import (
 
 // GET /api/images
 func (r *RestAPI) handlerGetImages(ctx *gin.Context) {
+	count := ctx.Query("count") != ""
 	offset := util.AtoiDef(ctx.Query("offset"), 0)
 	n := util.AtoiDef(ctx.Query("n"), 100)
+
+	if count {
+		images, err := r.img.List(0, -1)
+		if err != nil {
+			failInternal(ctx, err)
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"count": len(images),
+		})
+		return
+	}
 
 	images, err := r.img.List(offset, n)
 	if err != nil {
