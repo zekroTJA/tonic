@@ -9,26 +9,41 @@ import { Delete, Edit } from '@material-ui/icons';
 import Modal from '../../components/modal/modal';
 
 import './main-route.scss';
+import Header from '../../components/header/header';
 
 const IMGPREFIX =
   process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
 
+const PAGE_SIZE = 100;
+
 export default class MainRoute extends Component<{ history: History }> {
   public state = {
+    page: 1,
+    imageCount: 0,
     images: [] as ImageData[],
     modalDeleteOpen: false,
     target: (null as any) as ImageData,
   };
 
   public async componentDidMount() {
+    const imageCount = (await RestAPI.imagesCount())?.count;
+    this.setState({ imageCount });
     await this.fetchImages();
   }
 
   public render() {
     const images = this.state.images.map(this.imageCard.bind(this));
     return (
-      <div className="flex">
-        <div className="images-container">{images}</div>
+      <div>
+        <Header
+          page={this.state.page}
+          pageSize={PAGE_SIZE}
+          count={this.state.imageCount}
+          onPageChange={(page) => this.fetchImages(page)}
+        />
+        <div className="flex">
+          <div className="images-container">{images}</div>
+        </div>
         <Modal
           open={this.state.modalDeleteOpen}
           onClose={() => this.setState({ modalDeleteOpen: false })}
@@ -55,9 +70,14 @@ export default class MainRoute extends Component<{ history: History }> {
     );
   }
 
-  private async fetchImages() {
+  private async fetchImages(page?: number) {
+    if (page !== undefined && page !== this.state.page) {
+      await this.setState({ page });
+    }
     try {
-      const images = (await RestAPI.images())?.data;
+      const offset = (this.state.page - 1) * PAGE_SIZE;
+      console.log(this.state.page);
+      const images = (await RestAPI.images(offset, PAGE_SIZE))?.data;
       this.setState({ images });
     } catch (err) {
       console.error(err);

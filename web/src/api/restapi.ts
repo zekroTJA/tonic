@@ -32,6 +32,10 @@ export default class RestAPI {
     return this.get(`/api/images?offset=${offset}&n=${n}`);
   }
 
+  public static async imagesCount(): Promise<{ count: string }> {
+    return this.get(`/api/images?count=true`);
+  }
+
   public static async deleteImage(imageName: string): Promise<any> {
     return this.delete(`/api/images/${imageName}`);
   }

@@ -1,0 +1,19 @@
+.header-wrapper {
+  width: 100%;
+  background-color: #1A237E;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .header-left-wrapper {
+    display: flex;
+    margin-left: auto;
+    align-items: center;
+    justify-content: center;
+
+    > p {
+      margin: 0 20px 0 0;
+    }
+  }
+}

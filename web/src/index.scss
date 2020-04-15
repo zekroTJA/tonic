@@ -10,6 +10,10 @@ body {
   background-color: #0f0f0f;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 input {
   border: none;
   border-bottom: solid 2px;
