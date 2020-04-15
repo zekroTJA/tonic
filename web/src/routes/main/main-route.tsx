@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { History } from '../../types';
 import { ImageData } from '../../api/models';
 import RestAPI from '../../api/restapi';
-import { IconButton, Button } from '@material-ui/core';
+import { IconButton, Button, Input } from '@material-ui/core';
 import { Delete, Edit } from '@material-ui/icons';
 import Modal from '../../components/modal/modal';
 
@@ -21,9 +21,11 @@ export default class MainRoute extends Component<{ history: History }> {
     page: 1,
     imageCount: 0,
     images: [] as ImageData[],
-    modalDeleteOpen: false,
     modalViewOpen: false,
+    modalDeleteOpen: false,
+    modalRenameOpen: false,
     target: (null as any) as ImageData,
+    renameInput: '',
   };
 
   public async componentDidMount() {
@@ -48,6 +50,7 @@ export default class MainRoute extends Component<{ history: History }> {
         <div className="flex">
           <div className="images-container">{images}</div>
         </div>
+
         <Modal
           open={this.state.modalDeleteOpen}
           onClose={() => this.setState({ modalDeleteOpen: false })}
@@ -70,6 +73,34 @@ export default class MainRoute extends Component<{ history: History }> {
             No
           </Button>
         </Modal>
+
+        <Modal
+          open={this.state.modalRenameOpen}
+          onClose={() => this.setState({ modalRenameOpen: false })}
+        >
+          <h3 className="modal-heading">Rename Image</h3>
+          <div>
+            <Input
+              className="modal-rename-input"
+              type="text"
+              value={this.state.renameInput}
+              color="primary"
+              onChange={(e) => this.setState({ renameInput: e.target.value })}
+            />
+          </div>
+          <Button
+            style={{ marginRight: '10px' }}
+            variant="contained"
+            color="primary"
+            onClick={this.renameImage.bind(this)}
+          >
+            Rename
+          </Button>
+          <Button onClick={() => this.setState({ modalRenameOpen: false })}>
+            Cancel
+          </Button>
+        </Modal>
+
         <Modal
           open={this.state.modalViewOpen}
           onClose={() => this.setState({ modalViewOpen: false })}
@@ -156,12 +187,29 @@ export default class MainRoute extends Component<{ history: History }> {
   ) {
     event.preventDefault();
     event.stopPropagation();
+    this.setState({
+      modalRenameOpen: true,
+      target: image,
+      renameInput: image.name,
+    });
   }
 
   private async deleteImage() {
     if (this.state.target) {
       await RestAPI.deleteImage(this.state.target.name);
       this.setState({ modalDeleteOpen: false });
+      this.fetchImages();
+    }
+  }
+
+  private async renameImage() {
+    this.setState({ modalRenameOpen: false });
+
+    if (
+      this.state.renameInput &&
+      this.state.renameInput !== this.state.target.name
+    ) {
+      await RestAPI.renameImage(this.state.target.name, this.state.renameInput);
       this.fetchImages();
     }
   }

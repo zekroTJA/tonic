@@ -44,6 +44,15 @@ export default class RestAPI {
     return this.delete(`/api/images/${imageName}`);
   }
 
+  public static async renameImage(
+    imageName: string,
+    newName: string
+  ): Promise<any> {
+    return this.post(`/api/images/${imageName}`, {
+      name: newName,
+    } as ImageData);
+  }
+
   // --------------------------------------------------------------------------------
   // -- PRIVATE FUNCTIONS
 

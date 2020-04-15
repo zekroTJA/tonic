@@ -42,3 +42,12 @@ func (r *RestAPI) handlerCORS(ctx *gin.Context) {
 	ctx.Header("Access-Control-Allow-Headers", "Content-Type,Cookie")
 	ctx.Header("Access-Control-Allow-Credentials", "true")
 }
+
+func (r *RestAPI) handlePreflight(ctx *gin.Context) {
+	if ctx.Request.Method == http.MethodOptions {
+		ctx.Status(http.StatusOK)
+		ctx.Abort()
+		return
+	}
+	ctx.Next()
+}
