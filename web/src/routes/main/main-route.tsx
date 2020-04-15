@@ -22,6 +22,7 @@ export default class MainRoute extends Component<{ history: History }> {
     imageCount: 0,
     images: [] as ImageData[],
     modalDeleteOpen: false,
+    modalViewOpen: false,
     target: (null as any) as ImageData,
   };
 
@@ -29,6 +30,8 @@ export default class MainRoute extends Component<{ history: History }> {
     const imageCount = (await RestAPI.imagesCount())?.count;
     this.setState({ imageCount });
     await this.fetchImages();
+
+    window.onkeypress = this.closeModals.bind(this);
   }
 
   public render() {
@@ -66,6 +69,15 @@ export default class MainRoute extends Component<{ history: History }> {
             No
           </Button>
         </Modal>
+        <Modal
+          open={this.state.modalViewOpen}
+          onClose={() => this.setState({ modalViewOpen: false })}
+        >
+          <img
+            className="image-preview"
+            src={`${IMGPREFIX}/images/${this.state.target?.name}`}
+          />
+        </Modal>
       </div>
     );
   }
@@ -86,7 +98,11 @@ export default class MainRoute extends Component<{ history: History }> {
 
   private imageCard(image: ImageData): JSX.Element {
     return (
-      <div className="image-card" key={image.name}>
+      <div
+        className="image-card"
+        key={image.name}
+        onClick={(e) => this.preview(e, image)}
+      >
         <div
           className="image"
           style={{
@@ -96,10 +112,10 @@ export default class MainRoute extends Component<{ history: History }> {
         <div className="body">
           <p>{image.name}</p>
           <div className="controls">
-            <IconButton onClick={() => this.delete(image)}>
+            <IconButton name="btn" onClick={(e) => this.delete(e, image)}>
               <Delete fontSize="small" />
             </IconButton>
-            <IconButton onClick={() => this.rename(image)}>
+            <IconButton name="btn" onClick={(e) => this.rename(e, image)}>
               <Edit fontSize="small" />
             </IconButton>
           </div>
@@ -108,14 +124,38 @@ export default class MainRoute extends Component<{ history: History }> {
     );
   }
 
-  private delete(image: ImageData) {
+  private preview(
+    event: React.MouseEvent<Element, MouseEvent>,
+    image: ImageData
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.setState({
+      modalViewOpen: true,
+      target: image,
+    });
+  }
+
+  private delete(
+    event: React.MouseEvent<Element, MouseEvent>,
+    image: ImageData
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
     this.setState({
       modalDeleteOpen: true,
       target: image,
     });
   }
 
-  private rename(image: ImageData) {}
+  private rename(
+    event: React.MouseEvent<Element, MouseEvent>,
+    image: ImageData
+  ) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 
   private async deleteImage() {
     if (this.state.target) {
@@ -123,5 +163,12 @@ export default class MainRoute extends Component<{ history: History }> {
       this.setState({ modalDeleteOpen: false });
       this.fetchImages();
     }
+  }
+
+  private closeModals() {
+    this.setState({
+      modalViewOpen: false,
+      modalDeleteOpen: false,
+    });
   }
 }
