@@ -33,6 +33,9 @@ export default class LoginRoute extends Component<{ history: History }> {
               color="primary"
               value={this.state.password}
               onChange={this.passwordChange.bind(this)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') this.login();
+              }}
             />
             {this.state.valid === false && (
               <FormHelperText>Invalid password.</FormHelperText>

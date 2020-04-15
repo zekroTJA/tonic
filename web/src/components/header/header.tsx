@@ -36,7 +36,7 @@ export default class Header extends Component<HeaderProps> {
         />
         <div className="header-left-wrapper">
           <p className="no-margin">Image Count: {this.props.count}</p>
-          <Button>Logout</Button>
+          <Button onClick={this.props.onLogOut}>Logout</Button>
         </div>
       </div>
     );

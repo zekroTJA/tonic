@@ -43,6 +43,7 @@ export default class MainRoute extends Component<{ history: History }> {
           pageSize={PAGE_SIZE}
           count={this.state.imageCount}
           onPageChange={(page) => this.fetchImages(page)}
+          onLogOut={this.onLogout.bind(this)}
         />
         <div className="flex">
           <div className="images-container">{images}</div>
@@ -170,5 +171,10 @@ export default class MainRoute extends Component<{ history: History }> {
       modalViewOpen: false,
       modalDeleteOpen: false,
     });
+  }
+
+  private async onLogout() {
+    await RestAPI.authLogout();
+    this.props.history.push('/login');
   }
 }

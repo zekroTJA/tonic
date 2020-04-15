@@ -25,6 +25,10 @@ export default class RestAPI {
     return this.post('/api/auth/validate');
   }
 
+  public static async authLogout(): Promise<any> {
+    return this.post('/api/auth/logout');
+  }
+
   public static async images(
     offset: number = 0,
     n: number = 100
