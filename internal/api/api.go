@@ -92,6 +92,7 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 			auth := api.Group("/auth")
 			auth.
 				POST("/login", r.handleAuthLogin).
+				POST("/logout", r.handlerAuthLogout).
 				POST("/validate", r.handlerAuthValidate)
 		}
 

@@ -37,7 +37,7 @@ func (r *RestAPI) handleAuthLogin(ctx *gin.Context) {
 		return
 	}
 
-	ctx.SetCookie(jwtCookieName, token, int(r.authExpire.Seconds()), "", "", false, true)
+	ctx.SetCookie(jwtCookieName, token, int(r.authExpire.Seconds()), "", "", !r.cfg.Debug, true)
 
 	ok(ctx)
 }
@@ -61,6 +61,11 @@ func (r *RestAPI) handleAuthCheck(ctx *gin.Context) {
 
 	ctx.Next()
 	return
+}
+
+func (r *RestAPI) handlerAuthLogout(ctx *gin.Context) {
+	ctx.SetCookie(jwtCookieName, "", 0, "", "", !r.cfg.Debug, true)
+	ok(ctx)
 }
 
 func (r *RestAPI) check(ctx *gin.Context) bool {
