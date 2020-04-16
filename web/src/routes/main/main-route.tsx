@@ -272,13 +272,15 @@ export default class MainRoute extends Component<{ history: History }> {
     }
   }
 
-  private closeModals() {
-    this.setState({
-      modalViewOpen: false,
-      modalDeleteOpen: false,
-      modalInfoOpen: false,
-      modalRenameOpen: false,
-    });
+  private closeModals(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      this.setState({
+        modalViewOpen: false,
+        modalDeleteOpen: false,
+        modalInfoOpen: false,
+        modalRenameOpen: false,
+      });
+    }
   }
 
   private async onLogout() {
