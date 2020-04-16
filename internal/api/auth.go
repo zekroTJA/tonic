@@ -5,6 +5,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/zekroTJA/tonic/internal/hashing"
 )
 
 const (
@@ -22,7 +23,7 @@ func (r *RestAPI) handleAuthLogin(ctx *gin.Context) {
 		return
 	}
 
-	if login.Password != r.cfg.Password {
+	if !hashing.CompareHashSafe(r.authHash, login.Password) {
 		failUnauthorized(ctx)
 		return
 	}

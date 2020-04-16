@@ -4,10 +4,12 @@ import (
 	"crypto/rand"
 	"fmt"
 	"math"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/zekroTJA/tonic/internal/config"
+	"github.com/zekroTJA/tonic/internal/hashing"
 	"github.com/zekroTJA/tonic/internal/imgstore"
 	"github.com/zekroTJA/tonic/internal/thumbnails"
 )
@@ -21,6 +23,7 @@ type RestAPI struct {
 	cfg *config.Config
 	img imgstore.ImageStore
 
+	authHash   []byte
 	authSecret []byte
 	authExpire time.Duration
 
@@ -63,6 +66,18 @@ func New(cfg *config.Config, img imgstore.ImageStore) (r *RestAPI, err error) {
 		r.webDir = cfg.WebDir
 	} else {
 		r.webDir = "./web"
+	}
+
+	if strings.HasPrefix(cfg.Password, "$") {
+		r.authHash = hashing.StrToBytes(cfg.Password)
+	} else {
+		if r.authHash, err = hashing.GetHashB(cfg.Password, hashing.DefaultCost); err != nil {
+			return
+		}
+	}
+	if len(cfg.Password) < 1 {
+		err = fmt.Errorf("no password configured")
+		return
 	}
 
 	maxAge := defCacheMaxAge

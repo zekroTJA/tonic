@@ -8,5 +8,6 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/valyala/fasthttp v1.9.0 // indirect
+	golang.org/x/crypto v0.0.0-20200414173820-0848c9571904
 	golang.org/x/image v0.0.0-20200119044424-58c23975cae1
 )
