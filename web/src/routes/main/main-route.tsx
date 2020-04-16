@@ -39,7 +39,7 @@ export default class MainRoute extends Component<{ history: History }> {
   public render() {
     const images = this.state.images.map(this.imageCard.bind(this));
     return (
-      <div>
+      <div className="images-route-wrapper">
         <Header
           page={this.state.page}
           pageSize={PAGE_SIZE}
@@ -47,9 +47,7 @@ export default class MainRoute extends Component<{ history: History }> {
           onPageChange={(page) => this.fetchImages(page)}
           onLogOut={this.onLogout.bind(this)}
         />
-        <div className="flex">
-          <div className="images-container">{images}</div>
-        </div>
+        <div className="images-container">{images}</div>
 
         <Modal
           open={this.state.modalDeleteOpen}
@@ -107,6 +105,7 @@ export default class MainRoute extends Component<{ history: History }> {
         >
           <img
             className="image-preview"
+            alt="preview"
             src={`${IMGPREFIX}/images/${this.state.target?.name}`}
           />
         </Modal>

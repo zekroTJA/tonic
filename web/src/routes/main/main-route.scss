@@ -1,7 +1,15 @@
+.images-route-wrapper {
+  height: 100vh;
+  max-height: 100vh;
+  box-sizing: border-box;
+}
+
 .images-container {
   display: flex;
   flex-wrap: wrap;
-  margin: 7px 5px;
+  padding: 0 5px;
+  overflow-y: auto;
+  max-height: calc(100% - 45px);
 
   .image-card {
     width: 200px;
