@@ -7,7 +7,7 @@
 .images-container {
   display: flex;
   flex-wrap: wrap;
-  padding: 0 5px;
+  padding: 7px 5px 0 5px;
   overflow-y: auto;
   max-height: calc(100% - 45px);
 
@@ -60,4 +60,21 @@
   width: 90vw;
   max-width: 500px;
   margin-bottom: 30px;
+}
+
+.info-container {
+  text-align: center;
+
+  img {
+    max-height: 100px;
+    margin-bottom: 30px
+  }
+
+  th {
+    padding-right: 20px;
+  }
+
+  th, td {
+    text-align: left;
+  }
 }

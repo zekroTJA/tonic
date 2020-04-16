@@ -5,11 +5,13 @@ import { History } from '../../types';
 import { ImageData } from '../../api/models';
 import RestAPI from '../../api/restapi';
 import { IconButton, Button, Input } from '@material-ui/core';
-import { Delete, Edit } from '@material-ui/icons';
+import { Delete, Edit, Info } from '@material-ui/icons';
 import Modal from '../../components/modal/modal';
+import Header from '../../components/header/header';
+import dateFormat from 'dateformat';
+import { byteFormatter as byteFormat } from 'byte-formatter';
 
 import './main-route.scss';
-import Header from '../../components/header/header';
 
 const IMGPREFIX =
   process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
@@ -24,6 +26,7 @@ export default class MainRoute extends Component<{ history: History }> {
     modalViewOpen: false,
     modalDeleteOpen: false,
     modalRenameOpen: false,
+    modalInfoOpen: false,
     target: (null as any) as ImageData,
     renameInput: '',
   };
@@ -47,8 +50,10 @@ export default class MainRoute extends Component<{ history: History }> {
           onPageChange={(page) => this.fetchImages(page)}
           onLogOut={this.onLogout.bind(this)}
         />
+
         <div className="images-container">{images}</div>
 
+        {/*** MODAL DELETE ****/}
         <Modal
           open={this.state.modalDeleteOpen}
           onClose={() => this.setState({ modalDeleteOpen: false })}
@@ -56,7 +61,9 @@ export default class MainRoute extends Component<{ history: History }> {
           <h3 className="modal-heading">
             Do you really want to delete this image?
           </h3>
-
+          <p>
+            Do you really want to delete the image {this.state.target?.name}
+          </p>
           <Button
             style={{ marginRight: '10px' }}
             onClick={this.deleteImage.bind(this)}
@@ -72,6 +79,7 @@ export default class MainRoute extends Component<{ history: History }> {
           </Button>
         </Modal>
 
+        {/*** MODAL RENAME ****/}
         <Modal
           open={this.state.modalRenameOpen}
           onClose={() => this.setState({ modalRenameOpen: false })}
@@ -99,6 +107,7 @@ export default class MainRoute extends Component<{ history: History }> {
           </Button>
         </Modal>
 
+        {/*** MODAL IMAGE PREVIEW ****/}
         <Modal
           open={this.state.modalViewOpen}
           onClose={() => this.setState({ modalViewOpen: false })}
@@ -108,6 +117,44 @@ export default class MainRoute extends Component<{ history: History }> {
             alt="preview"
             src={`${IMGPREFIX}/images/${this.state.target?.name}`}
           />
+        </Modal>
+
+        {/*** MODAL INFO ****/}
+        <Modal
+          open={this.state.modalInfoOpen}
+          onClose={() => this.setState({ modalInfoOpen: false })}
+        >
+          <div className="info-container">
+            <img
+              alt="thumbnail"
+              src={`${IMGPREFIX}/images/${this.state.target?.name}/thumbnail.jpg?height=150&width=10000`}
+            />
+            <table>
+              <tbody>
+                <tr>
+                  <th>Name</th>
+                  <td>{this.state.target?.name}</td>
+                </tr>
+                <tr>
+                  <th>Type</th>
+                  <td>{this.state.target?.mime_type}</td>
+                </tr>
+                <tr>
+                  <th>Size</th>
+                  <td>{byteFormat(this.state.target?.size)}</td>
+                </tr>
+                <tr>
+                  <th>Mod Date</th>
+                  <td>
+                    {dateFormat(
+                      this.state.target?.date,
+                      'yyyy/MM/dd, hh:mm:ss O'
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </Modal>
       </div>
     );
@@ -143,11 +190,14 @@ export default class MainRoute extends Component<{ history: History }> {
         <div className="body">
           <p>{image.name}</p>
           <div className="controls">
-            <IconButton name="btn" onClick={(e) => this.delete(e, image)}>
+            <IconButton onClick={(e) => this.delete(e, image)}>
               <Delete fontSize="small" />
             </IconButton>
-            <IconButton name="btn" onClick={(e) => this.rename(e, image)}>
+            <IconButton onClick={(e) => this.rename(e, image)}>
               <Edit fontSize="small" />
+            </IconButton>
+            <IconButton onClick={(e) => this.info(e, image)}>
+              <Info fontSize="small" />
             </IconButton>
           </div>
         </div>
@@ -193,6 +243,15 @@ export default class MainRoute extends Component<{ history: History }> {
     });
   }
 
+  private info(event: React.MouseEvent<Element, MouseEvent>, image: ImageData) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.setState({
+      modalInfoOpen: true,
+      target: image,
+    });
+  }
+
   private async deleteImage() {
     if (this.state.target) {
       await RestAPI.deleteImage(this.state.target.name);
@@ -217,6 +276,8 @@ export default class MainRoute extends Component<{ history: History }> {
     this.setState({
       modalViewOpen: false,
       modalDeleteOpen: false,
+      modalInfoOpen: false,
+      modalRenameOpen: false,
     });
   }
 
