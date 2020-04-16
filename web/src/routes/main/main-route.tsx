@@ -148,7 +148,7 @@ export default class MainRoute extends Component<{ history: History }> {
                   <td>
                     {dateFormat(
                       this.state.target?.date,
-                      'yyyy/MM/dd, hh:mm:ss O'
+                      'yyyy/MM/dd, hh:mm:ss'
                     )}
                   </td>
                 </tr>

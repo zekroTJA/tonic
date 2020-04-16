@@ -17,6 +17,7 @@
     margin: 7px;
     background-color: #1d1d1d;
     cursor: pointer;
+    transition: all .25s ease;
 
     .image {
       border-radius: 5px 5px 0 0;
@@ -44,7 +45,13 @@
         }
       }
     }
+
+    &:hover {
+      box-shadow: 0px 0px 25px 0px black;
+      transform: scale(1.02);
+    }
   }
+
 }
 
 .modal-heading {
