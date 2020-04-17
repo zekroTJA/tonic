@@ -5,10 +5,14 @@ import { History } from '../../types';
 import { Button, FormControl, TextField } from '@material-ui/core';
 import { ArrowBack, Save } from '@material-ui/icons';
 import LocalStorageAPI from '../../api/localstorage';
+import SnackBarService from '../../services/snackabr';
 
 import './settings-route.scss';
 
-export default class SettingsRoute extends Component<{ history: History }> {
+export default class SettingsRoute extends Component<{
+  history: History;
+  snackBarService: SnackBarService;
+}> {
   public state = {
     itemsPerPage: 0,
   };
@@ -62,5 +66,9 @@ export default class SettingsRoute extends Component<{ history: History }> {
 
   private saveSettings() {
     LocalStorageAPI.itemsPerPage = this.state.itemsPerPage;
+    this.props.snackBarService.show({
+      severity: 'success',
+      content: 'Settings saved.',
+    });
   }
 }

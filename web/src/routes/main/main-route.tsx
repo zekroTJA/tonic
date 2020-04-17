@@ -10,14 +10,18 @@ import Header from '../../components/header/header';
 import dateFormat from 'dateformat';
 import { byteFormatter as byteFormat } from 'byte-formatter';
 import ImageCard from '../../components/image-card/image-card';
+import LocalStorageAPI from '../../api/localstorage';
+import SnackBarService from '../../services/snackabr';
 
 import './main-route.scss';
-import LocalStorageAPI from '../../api/localstorage';
 
 const IMGPREFIX =
   process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
 
-export default class MainRoute extends Component<{ history: History }> {
+export default class MainRoute extends Component<{
+  history: History;
+  snackBarService: SnackBarService;
+}> {
   public state = {
     page: 1,
     pageSize: 50,
@@ -43,6 +47,7 @@ export default class MainRoute extends Component<{ history: History }> {
   public render() {
     const images = this.state.images.map((i) => (
       <ImageCard
+        key={i.name}
         image={i}
         urlPrefix={IMGPREFIX}
         onClick={this.preview.bind(this)}
@@ -189,7 +194,6 @@ export default class MainRoute extends Component<{ history: History }> {
     }
     try {
       const offset = (this.state.page - 1) * this.state.pageSize;
-      console.log(this.state.page);
       const images = (await RestAPI.images(offset, this.state.pageSize))?.data;
       this.setState({ images });
     } catch (err) {
@@ -248,6 +252,10 @@ export default class MainRoute extends Component<{ history: History }> {
     if (this.state.target) {
       await RestAPI.deleteImage(this.state.target.name);
       this.setState({ modalDeleteOpen: false });
+      this.props.snackBarService.show({
+        severity: 'success',
+        content: <span>Image deleted.</span>,
+      });
       this.fetchImages();
     }
   }
@@ -260,7 +268,16 @@ export default class MainRoute extends Component<{ history: History }> {
       this.state.renameInput !== this.state.target.name
     ) {
       await RestAPI.renameImage(this.state.target.name, this.state.renameInput);
+      this.props.snackBarService.show({
+        severity: 'success',
+        content: <span>Image renamed to {this.state.renameInput}.</span>,
+      });
       this.fetchImages();
+    } else {
+      this.props.snackBarService.show({
+        severity: 'info',
+        content: <span>Image name did not change.</span>,
+      });
     }
   }
 
