@@ -13,7 +13,7 @@
             "env": {
                 "TONIC_IMAGELOCATION": "${workspaceFolder}/data/images",
                 "TONIC_ADDRESS": "localhost:8080",
-                "TONIC_PASSWORD": "$2a$12$.Cyu21sXW/TndPDJIOpmT.63wxsnSqBcMZxjr/s1zbDESgWuRmYoq",
+                "TONIC_PASSWORD": "$2a$10$9FftZqlFcBAeLAUu1kykw.DGCkqHf1/eq5i/ZTTjHDJOfX2ecEJA6",
                 "TONIC_DEBUG": true,
                 "TONIC_JWTSECRET": "superSecretTestSecret",
                 "TONIC_WEBDIR": "${workspaceFolder}/web/build",

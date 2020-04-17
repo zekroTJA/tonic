@@ -8,6 +8,7 @@ import MainRoute from './routes/main/main-route';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 
 import './App.scss';
+import SettingsRoute from './routes/settings/settings-route';
 
 export default class App extends Component {
   public state = {
@@ -39,6 +40,11 @@ export default class App extends Component {
             exact
             path="/login"
             render={({ history }) => <LoginRoute history={history} />}
+          />
+          <Route
+            exact
+            path="/settings"
+            render={({ history }) => <SettingsRoute history={history} />}
           />
           <Route
             exact

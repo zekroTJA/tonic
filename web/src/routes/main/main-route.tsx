@@ -12,15 +12,15 @@ import { byteFormatter as byteFormat } from 'byte-formatter';
 import ImageCard from '../../components/image-card/image-card';
 
 import './main-route.scss';
+import LocalStorageAPI from '../../api/localstorage';
 
 const IMGPREFIX =
   process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '';
 
-const PAGE_SIZE = 100;
-
 export default class MainRoute extends Component<{ history: History }> {
   public state = {
     page: 1,
+    pageSize: 50,
     imageCount: 0,
     images: [] as ImageData[],
     modalViewOpen: false,
@@ -33,7 +33,8 @@ export default class MainRoute extends Component<{ history: History }> {
 
   public async componentDidMount() {
     const imageCount = (await RestAPI.imagesCount())?.count;
-    this.setState({ imageCount });
+    const pageSize = LocalStorageAPI.itemsPerPage ?? 50;
+    this.setState({ imageCount, pageSize });
     await this.fetchImages();
 
     window.onkeypress = this.closeModals.bind(this);
@@ -54,10 +55,11 @@ export default class MainRoute extends Component<{ history: History }> {
       <div className="images-route-wrapper">
         <Header
           page={this.state.page}
-          pageSize={PAGE_SIZE}
+          pageSize={this.state.pageSize}
           count={this.state.imageCount}
           onPageChange={(page) => this.fetchImages(page)}
           onLogOut={this.onLogout.bind(this)}
+          onSettings={() => this.props.history.push('/settings')}
         />
 
         <div className="images-container">{images}</div>
@@ -186,9 +188,9 @@ export default class MainRoute extends Component<{ history: History }> {
       await this.setState({ page });
     }
     try {
-      const offset = (this.state.page - 1) * PAGE_SIZE;
+      const offset = (this.state.page - 1) * this.state.pageSize;
       console.log(this.state.page);
-      const images = (await RestAPI.images(offset, PAGE_SIZE))?.data;
+      const images = (await RestAPI.images(offset, this.state.pageSize))?.data;
       this.setState({ images });
     } catch (err) {
       console.error(err);

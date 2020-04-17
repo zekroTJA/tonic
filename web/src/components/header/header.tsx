@@ -2,9 +2,9 @@
 
 import React, { Component } from 'react';
 import { Pagination } from '@material-ui/lab';
+import { Button } from '@material-ui/core';
 
 import './header.scss';
-import { Button } from '@material-ui/core';
 
 export interface HeaderProps {
   count: number;
@@ -12,6 +12,7 @@ export interface HeaderProps {
   pageSize: number;
   onPageChange: (page: number) => void;
   onLogOut: () => void;
+  onSettings: () => void;
 }
 
 export default class Header extends Component<HeaderProps> {
@@ -36,6 +37,12 @@ export default class Header extends Component<HeaderProps> {
         />
         <div className="header-left-wrapper">
           <p className="no-margin">Image Count: {this.props.count}</p>
+          <Button
+            onClick={this.props.onSettings}
+            style={{ marginRight: '20px' }}
+          >
+            Settings
+          </Button>
           <Button onClick={this.props.onLogOut}>Logout</Button>
         </div>
       </div>
