@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import { History } from '../../types';
 import { ImageData } from '../../api/models';
 import RestAPI from '../../api/restapi';
-import { IconButton, Button, Input } from '@material-ui/core';
-import { Delete, Edit, Info } from '@material-ui/icons';
+import { Button, Input } from '@material-ui/core';
 import Modal from '../../components/modal/modal';
 import Header from '../../components/header/header';
 import dateFormat from 'dateformat';
 import { byteFormatter as byteFormat } from 'byte-formatter';
+import ImageCard from '../../components/image-card/image-card';
 
 import './main-route.scss';
 
@@ -40,7 +40,16 @@ export default class MainRoute extends Component<{ history: History }> {
   }
 
   public render() {
-    const images = this.state.images.map(this.imageCard.bind(this));
+    const images = this.state.images.map((i) => (
+      <ImageCard
+        image={i}
+        urlPrefix={IMGPREFIX}
+        onClick={this.preview.bind(this)}
+        onDeleteClick={this.delete.bind(this)}
+        onRenameClick={this.rename.bind(this)}
+        onInfoClick={this.info.bind(this)}
+      />
+    ));
     return (
       <div className="images-route-wrapper">
         <Header
@@ -53,110 +62,122 @@ export default class MainRoute extends Component<{ history: History }> {
 
         <div className="images-container">{images}</div>
 
-        {/*** MODAL DELETE ****/}
-        <Modal
-          open={this.state.modalDeleteOpen}
-          onClose={() => this.setState({ modalDeleteOpen: false })}
-        >
-          <h3 className="modal-heading">
-            Do you really want to delete this image?
-          </h3>
-          <p>
-            Do you really want to delete the image {this.state.target?.name}
-          </p>
-          <Button
-            style={{ marginRight: '10px' }}
-            onClick={this.deleteImage.bind(this)}
-          >
-            Yes
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => this.setState({ modalDeleteOpen: false })}
-          >
-            No
-          </Button>
-        </Modal>
-
-        {/*** MODAL RENAME ****/}
-        <Modal
-          open={this.state.modalRenameOpen}
-          onClose={() => this.setState({ modalRenameOpen: false })}
-        >
-          <h3 className="modal-heading">Rename Image</h3>
-          <div>
-            <Input
-              className="modal-rename-input"
-              type="text"
-              value={this.state.renameInput}
-              color="primary"
-              onChange={(e) => this.setState({ renameInput: e.target.value })}
-            />
-          </div>
-          <Button
-            style={{ marginRight: '10px' }}
-            variant="contained"
-            color="primary"
-            onClick={this.renameImage.bind(this)}
-          >
-            Rename
-          </Button>
-          <Button onClick={() => this.setState({ modalRenameOpen: false })}>
-            Cancel
-          </Button>
-        </Modal>
-
-        {/*** MODAL IMAGE PREVIEW ****/}
-        <Modal
-          open={this.state.modalViewOpen}
-          onClose={() => this.setState({ modalViewOpen: false })}
-        >
-          <img
-            className="image-preview"
-            alt="preview"
-            src={`${IMGPREFIX}/images/${this.state.target?.name}`}
-          />
-        </Modal>
-
-        {/*** MODAL INFO ****/}
-        <Modal
-          open={this.state.modalInfoOpen}
-          onClose={() => this.setState({ modalInfoOpen: false })}
-        >
-          <div className="info-container">
-            <img
-              alt="thumbnail"
-              src={`${IMGPREFIX}/images/${this.state.target?.name}/thumbnail.jpg?height=150&width=10000`}
-            />
-            <table>
-              <tbody>
-                <tr>
-                  <th>Name</th>
-                  <td>{this.state.target?.name}</td>
-                </tr>
-                <tr>
-                  <th>Type</th>
-                  <td>{this.state.target?.mime_type}</td>
-                </tr>
-                <tr>
-                  <th>Size</th>
-                  <td>{byteFormat(this.state.target?.size)}</td>
-                </tr>
-                <tr>
-                  <th>Mod Date</th>
-                  <td>
-                    {dateFormat(
-                      this.state.target?.date,
-                      'yyyy/MM/dd, hh:mm:ss'
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </Modal>
+        {this.modalDelete}
+        {this.modalRename}
+        {this.modalPreview}
+        {this.modalInfo}
       </div>
+    );
+  }
+
+  private get modalDelete(): JSX.Element {
+    return (
+      <Modal
+        open={this.state.modalDeleteOpen}
+        onClose={() => this.setState({ modalDeleteOpen: false })}
+      >
+        <h3 className="modal-heading">
+          Do you really want to delete this image?
+        </h3>
+        <p>Do you really want to delete the image {this.state.target?.name}</p>
+        <Button
+          style={{ marginRight: '10px' }}
+          onClick={this.deleteImage.bind(this)}
+        >
+          Yes
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => this.setState({ modalDeleteOpen: false })}
+        >
+          No
+        </Button>
+      </Modal>
+    );
+  }
+
+  private get modalRename(): JSX.Element {
+    return (
+      <Modal
+        open={this.state.modalRenameOpen}
+        onClose={() => this.setState({ modalRenameOpen: false })}
+      >
+        <h3 className="modal-heading">Rename Image</h3>
+        <div>
+          <Input
+            className="modal-rename-input"
+            type="text"
+            value={this.state.renameInput}
+            color="primary"
+            onChange={(e) => this.setState({ renameInput: e.target.value })}
+          />
+        </div>
+        <Button
+          style={{ marginRight: '10px' }}
+          variant="contained"
+          color="primary"
+          onClick={this.renameImage.bind(this)}
+        >
+          Rename
+        </Button>
+        <Button onClick={() => this.setState({ modalRenameOpen: false })}>
+          Cancel
+        </Button>
+      </Modal>
+    );
+  }
+
+  private get modalPreview(): JSX.Element {
+    return (
+      <Modal
+        open={this.state.modalViewOpen}
+        onClose={() => this.setState({ modalViewOpen: false })}
+      >
+        <img
+          className="image-preview"
+          alt="preview"
+          src={`${IMGPREFIX}/images/${this.state.target?.name}`}
+        />
+      </Modal>
+    );
+  }
+
+  private get modalInfo(): JSX.Element {
+    return (
+      <Modal
+        open={this.state.modalInfoOpen}
+        onClose={() => this.setState({ modalInfoOpen: false })}
+      >
+        <div className="info-container">
+          <img
+            alt="thumbnail"
+            src={`${IMGPREFIX}/images/${this.state.target?.name}/thumbnail.jpg?height=150&width=10000`}
+          />
+          <table>
+            <tbody>
+              <tr>
+                <th>Name</th>
+                <td>{this.state.target?.name}</td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                <td>{this.state.target?.mime_type}</td>
+              </tr>
+              <tr>
+                <th>Size</th>
+                <td>{byteFormat(this.state.target?.size)}</td>
+              </tr>
+              <tr>
+                <th>Mod Date</th>
+                <td>
+                  {dateFormat(this.state.target?.date, 'yyyy/MM/dd, hh:mm:ss')}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Modal>
     );
   }
 
@@ -172,37 +193,6 @@ export default class MainRoute extends Component<{ history: History }> {
     } catch (err) {
       console.error(err);
     }
-  }
-
-  private imageCard(image: ImageData): JSX.Element {
-    return (
-      <div
-        className="image-card"
-        key={image.name}
-        onClick={(e) => this.preview(e, image)}
-      >
-        <div
-          className="image"
-          style={{
-            backgroundImage: `url("${IMGPREFIX}/images/${image.name}/thumbnail.jpg?height=150&width=10000")`,
-          }}
-        />
-        <div className="body">
-          <p>{image.name}</p>
-          <div className="controls">
-            <IconButton onClick={(e) => this.delete(e, image)}>
-              <Delete fontSize="small" />
-            </IconButton>
-            <IconButton onClick={(e) => this.rename(e, image)}>
-              <Edit fontSize="small" />
-            </IconButton>
-            <IconButton onClick={(e) => this.info(e, image)}>
-              <Info fontSize="small" />
-            </IconButton>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   private preview(
