@@ -26,9 +26,15 @@
     }
 
     .controls {
+      display: flex;
+
       & > * {
         padding: 0;
         margin-right: 10px;
+      }
+
+      .control-info {
+        margin: auto 0 auto auto;
       }
     }
   }

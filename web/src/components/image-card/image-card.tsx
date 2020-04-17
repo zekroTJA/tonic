@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { ImageData } from '../../api/models';
 import { ClickEvent } from '../../types';
 import { IconButton } from '@material-ui/core';
-import { Delete, Edit, Info } from '@material-ui/icons';
+import { Delete, Edit, Info, Gif } from '@material-ui/icons';
 
 import './image-card.scss';
 
@@ -54,9 +54,16 @@ export default class ImageCard extends Component<ImageCardProps> {
             <IconButton onClick={(e) => this.props.onInfoClick(e, image)}>
               <Info fontSize="small" />
             </IconButton>
+            <div className="control-info">
+              {this.isGif && <Gif fontSize="default" />}
+            </div>
           </div>
         </div>
       </div>
     );
+  }
+
+  private get isGif(): boolean {
+    return this.props.image.mime_type.toLowerCase() === 'image/gif';
   }
 }
