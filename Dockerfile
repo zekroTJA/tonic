@@ -16,16 +16,22 @@ RUN go build \
         -o tonic \
         ./cmd/tonic/*.go
 
+RUN go build \
+        -o hasher \
+        ./cmd/hasher/*.go
+
 
 FROM alpine:latest AS final
 
 COPY --from=build /build/tonic /app/tonic
+COPY --from=build /build/hasher /usr/bin/hasher
 COPY --from=build /build/web/build /app/web
 
 RUN mkdir -p /etc/certs &&\
     mkdir -p /var/img &&\
     mkdir -p /tmp/thumbnails
-RUN chmod +x /app/tonic
+RUN chmod +x /app/tonic &&\
+    chmod +x /usr/bin/hasher
 
 ENV TONIC_WEBDIR="/app/web" \
     TONIC_IMAGELOCATION="/var/img" \
